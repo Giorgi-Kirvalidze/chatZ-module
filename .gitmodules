@@ -1,0 +1,6 @@
+[submodule "chatZ-server"]
+	path = chatZ-server
+	url = https://github.com/Giorgi-Kirvalidze/chatZ-server
+[submodule "chatZ-client"]
+	path = chatZ-client
+	url = https://github.com/Giorgi-Kirvalidze/chatZ-client
