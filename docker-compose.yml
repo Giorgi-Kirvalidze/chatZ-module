@@ -25,6 +25,7 @@ services:
     container_name: chatZ-server
     build:
       context: chatZ-server
+      target: development
     depends_on:
       - mysql
     restart: always
@@ -37,8 +38,8 @@ services:
     networks:
       - chatZ-network
     volumes:
-      - ./chatZ-server:/app
-      - /app/node_modules
+      - ./chatZ-server:/usr/src/app
+      - /usr/src/app/node_modules
   client:
     build: chatZ-client
     ports:
