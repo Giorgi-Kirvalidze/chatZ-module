@@ -1,0 +1,57 @@
+version: "3.6"
+services:
+  mysql:
+    container_name: mysql
+    image: mysql:8.0
+    cap_add:
+      - SYS_NICE
+    restart: always
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_HOST: ${MYSQL_ROOT_HOST}
+    env_file:
+      - ./.env
+    networks:
+      - chatZ-network
+    ports:
+      - ${MYSQL_PORT}:${MYSQL_PORT}
+    volumes:
+      - db:/var/lib/mysql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+  api:
+    container_name: chatZ-server
+    build:
+      context: chatZ-server
+    depends_on:
+      - mysql
+    restart: always
+    links:
+      - mysql
+    env_file:
+      - ./.env
+    ports:
+      - ${SERVER_PORT}:${SERVER_PORT}
+    networks:
+      - chatZ-network
+    volumes:
+      - ./chatZ-server:/app
+      - /app/node_modules
+  client:
+    build: chatZ-client
+    ports:
+      - ${CLIENT_PORT}:${CLIENT_PORT}
+    env_file:
+      - ./.env
+    volumes:
+      - ./chatZ-client/src:/app/src
+      - /app/node_modules
+    depends_on:
+      - api
+volumes:
+  db:
+networks:
+  chatZ-network:
+    driver: bridge
